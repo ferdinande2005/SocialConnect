@@ -54,7 +54,7 @@ if (isset($data['firstname'], $data['lastname'], $data['email'], $data['password
     </body>
     </html>
     ";
-
+    
 // Envoi de l'email
 mail($to, $subject, $message, $headers);
 
