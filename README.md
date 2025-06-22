@@ -1,31 +1,12 @@
 # SocialConnect
 un réseau social de discussion ou l'on peut partager des souvenir se faire des amis, découvrir de nouvelles choses et discuter avec pleins de personnes
 
-Très bonne idée — voici un **README.md complet, structuré et professionnel** pour ton projet de réseau social en PHP/Ajax. Tu pourras l’intégrer directement à ton dépôt GitHub ou GitLab.
-
----
-
 ## 📄 README.md
 
 markdown
 # 📱 SocialConnect - Réseau Social PHP/Ajax
 
-Projet de TP final du module **PHP & Ajax**, visant à développer une application web de type réseau social inspirée de Facebook.
-
----
-
-## 📌 Sommaire
-
-- [Présentation](#présentation)
-- [Fonctionnalités](#fonctionnalités)
-- [Technologies](#technologies)
-- [Architecture du Projet](#architecture-du-projet)
-- [Installation](#installation)
-- [Identifiants de Test](#identifiants-de-test)
-- [Déploiement](#déploiement)
-- [Contributeurs](#contributeurs)
-
----
+Projet visant à développer une application web de type réseau social inspirée de Facebook.
 
 ## 📖 Présentation
 
