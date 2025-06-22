@@ -5,6 +5,7 @@ function switchForm() {
 
 // Connexion
 document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // empêche le rechargement de la page
     e.preventDefault();
 
     const formData = {
@@ -32,6 +33,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
 // Inscription
 document.getElementById('registerForm').addEventListener('submit', function(e) {
+    // empêche le rechargement de la page
     e.preventDefault();
 
     const formData = {
