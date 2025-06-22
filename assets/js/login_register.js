@@ -12,7 +12,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     password: this.password.value
     };
 
-    fetch('api/login.php', {
+    fetch('http://localhost/ReseauSocial/api/login_register.php', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(formData)
@@ -41,7 +41,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     password: this.password.value
     };
 
-    fetch('api/register.php', {
+    fetch('http://localhost/ReseauSocial/api/login_register.php', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(formData)
