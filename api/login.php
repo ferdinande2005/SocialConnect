@@ -1,43 +1,64 @@
 <?php
-//ajout de l'entete de la reponse
-header('Content-Type: application/json');
-//inclusion de la base de données
-include 'config.php';
+// Inclusion de la configuration
+require_once 'config.php';
 
-//recuperation de la reponse
+// Vérification de la méthode HTTP
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
+}
+
+// Récupération des données
 $data = json_decode(file_get_contents('php://input'), true);
 
-//verification des données
-if (isset($data['email'], $data['password'])) {
-    $email = htmlspecialchars($data['email']);
-    $password = $data['password'];
+// Validation des données
+if (!isset($data['email'], $data['password'])) {
+    jsonResponse(['status' => 'error', 'message' => 'Données manquantes'], 400);
+}
 
-    //verification de l'email
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+// Validation de l'email
+if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    jsonResponse(['status' => 'error', 'message' => 'Email invalide'], 400);
+}
+
+// Sécurisation des données
+$email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
+$password = $data['password'];
+
+// Vérification de l'utilisateur
+try {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND status = 'active'");
     $stmt->execute([$email]);
-
-    //verification de l'email
-    if ($stmt->rowCount() == 1) {
+    
+    if ($stmt->rowCount() === 1) {
         $user = $stmt->fetch();
-
-        //verification du mot de passe
+        
+        // Vérification du mot de passe
         if (password_verify($password, $user['password'])) {
-            echo json_encode([
+            // Génération d'un token CSRF
+            $csrf_token = bin2hex(random_bytes(32));
+            
+            // Mise à jour du token CSRF dans la base
+            $pdo->prepare("UPDATE users SET csrf_token = ? WHERE id = ?")->execute([$csrf_token, $user['id']]);
+            
+            // Préparation des données de réponse
+            $response = [
                 'status' => 'success',
                 'message' => 'Connexion réussie.',
                 'user' => [
                     'id' => $user['id'],
-                    'firstname' => $user['firstname'],
-                    'lastname' => $user['lastname'],
-                    'email' => $user['email'],
-                    'role' => $user['role']
+                    'firstname' => htmlspecialchars($user['firstname']),
+                    'lastname' => htmlspecialchars($user['lastname']),
+                    'email' => $email,
+                    'csrf_token' => $csrf_token
                 ]
-            ]);
-            exit;
+            ];
+            
+            jsonResponse($response, 200);
         }
     }
-    echo json_encode(['status' => 'error', 'message' => 'Email ou mot de passe incorrect.']);
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Données manquantes.']);
+    
+    jsonResponse(['status' => 'error', 'message' => 'Email ou mot de passe incorrect.'], 401);
+} catch (PDOException $e) {
+    error_log("Erreur de connexion: " . $e->getMessage());
+    jsonResponse(['status' => 'error', 'message' => 'Erreur serveur'], 500);
 }
-?>

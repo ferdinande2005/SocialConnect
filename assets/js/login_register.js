@@ -1,62 +1,145 @@
-// Switch entre login et inscription
-function switchForm() {
-    document.getElementById('formContainer').classList.toggle('switch');
+// Configuration de l'API
+const API_URL = 'http://localhost/ReseauSocial/api';
+
+// Validation des formulaires
+function validateForm(formData, type) {
+    const errors = [];
+
+    // Validation email
+    if (!formData.email || !formData.email.trim()) {
+        errors.push('L\'email est requis');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        errors.push('Email invalide');
+    }
+
+    if (type === 'login') {
+        if (!formData.password || formData.password.length < 8) {
+            errors.push('Le mot de passe doit contenir au moins 8 caractères');
+        }
+    } else { // register
+        if (!formData.firstname || !formData.firstname.trim()) {
+            errors.push('Le prénom est requis');
+        }
+        if (!formData.lastname || !formData.lastname.trim()) {
+            errors.push('Le nom est requis');
+        }
+        if (formData.password !== formData.confirm_password) {
+            errors.push('Les mots de passe ne correspondent pas');
+        }
+        if (formData.password.length < 8 || formData.password.length > 72) {
+            errors.push('Le mot de passe doit contenir entre 8 et 72 caractères');
+        }
+    }
+
+    return errors;
 }
 
-// Connexion
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    // empêche le rechargement de la page
+// Affichage des erreurs
+function handleError(error, container) {
+    container.innerHTML = `
+        <div class="alert alert-danger">
+            <strong>Erreur :</strong> ${error}
+        </div>
+    `;
+}
+
+// Gestion de la connexion
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const formData = {
-    email: this.email.value,
-    password: this.password.value
+        email: this.email.value.trim(),
+        password: this.password.value
     };
 
-    fetch('http://localhost/ReseauSocial/api/login_register.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-    const msg = document.getElementById('loginMessage');
-    if (data.status === 'success') {
-        msg.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-        sessionStorage.setItem('user', JSON.stringify(data.user));
-        setTimeout(() => window.location.href = 'vues/clients/home.html', 800);
-    } else {
-        msg.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+    const errors = validateForm(formData, 'login');
+    if (errors.length > 0) {
+        handleError(errors.join('<br>'), document.getElementById('loginMessage'));
+        return;
     }
-    });
+
+    document.getElementById('loader').style.display = 'block';
+
+    try {
+        const response = await fetch(`${API_URL}/login.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        document.getElementById('loader').style.display = 'none';
+
+        if (data.status === 'success') {
+            sessionStorage.setItem('user', JSON.stringify(data.user));
+            sessionStorage.setItem('csrf_token', data.user.csrf_token);
+
+            setTimeout(() => {
+                window.location.href = 'vues/clients/home.html';
+            }, 1200);
+        } else {
+            handleError(data.message, document.getElementById('loginMessage'));
+        }
+    } catch (error) {
+        handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
+        document.getElementById('loader').style.display = 'none';
+    }
 });
 
-// Inscription
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    // empêche le rechargement de la page
+// Gestion de l'inscription
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const formData = {
-    firstname: this.firstname.value,
-    lastname: this.lastname.value,
-    email: this.email.value,
-    password: this.password.value
+        firstname: this.firstname.value.trim(),
+        lastname: this.lastname.value.trim(),
+        email: this.email.value.trim(),
+        password: this.password.value,
+        confirm_password: this.confirm_password.value
     };
 
-    fetch('http://localhost/ReseauSocial/api/login_register.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(formData)
-    })
-    .then(res => res.json())
-    .then(data => {
-    const msg = document.getElementById('registerMessage');
-    if (data.status === 'success') {
-        msg.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-        this.reset();
-        setTimeout(() => switchForm(), 1500);
-    } else {
-        msg.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+    const errors = validateForm(formData, 'register');
+    if (errors.length > 0) {
+        handleError(errors.join('<br>'), document.getElementById('registerMessage'));
+        return;
     }
-    });
+
+    document.getElementById('loaderReg').style.display = 'block';
+
+    try {
+        const response = await fetch(`${API_URL}/register.php`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        document.getElementById('loaderReg').style.display = 'none';
+
+        if (data.status === 'success') {
+            document.getElementById('registerMessage').innerHTML = `
+                <div class="alert alert-success">
+                    ${data.message}
+                </div>
+            `;
+            this.reset();
+
+            setTimeout(() => {
+                window.location.href = 'vues/clients/home.html';
+            }, 1200);
+        } else {
+            handleError(data.message, document.getElementById('registerMessage'));
+        }
+    } catch (error) {
+        handleError('Une erreur est survenue lors de l\'inscription', document.getElementById('registerMessage'));
+        document.getElementById('loaderReg').style.display = 'none';
+    }
 });
