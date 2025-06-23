@@ -2,101 +2,153 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Connexion / Inscription - SocialConnect</title>
+<title>SocialConnect</title>
 <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/icons/bootstrap-icons.css" rel="stylesheet">
 <style>
     body {
-    background: linear-gradient(-45deg, #007bff, #00c6ff, #7ee8fa, #eec0c6);
-    background-size: 400% 400%;
-    animation: gradient 10s ease infinite;
+    background: url('assets/images/Background.png') no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: blur(4px);
+    }
+    .overlay {
+    background: rgba(255,255,255,0.85);
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    }
-
-    @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-    }
-
-    .box {
-    background: #fff;
     padding: 40px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 450px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.15);
-    text-align: center;
     }
-
-    .hidden {
-    display: none;
+    .logo img {
+        max-width: 200px;
+        height: auto;
+    }
+    .tagline {
+    font-size: 22px;
+    color: #1c1e21;
+    }
+    .card-login {
+    max-width: 400px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    background: #fff;
+    }
+    .modal.fade .modal-dialog {
+    transform: translateY(-50px);
     opacity: 0;
-    transition: all 0.5s ease;
+    transition: all 0.4s ease;
     }
-
-    .visible {
-    display: block;
+    .modal.fade.show .modal-dialog {
+    transform: translateY(0);
     opacity: 1;
-    transition: all 0.5s ease;
+    }
+    .spinner-border {
+    width: 2.5rem;
+    height: 2.5rem;
+    }
+    .btn-primary, .btn-success {
+    transition: 0.3s ease;
+    }
+    .btn-primary:hover, .btn-success:hover {
+    transform: scale(1.03);
+    }
+    .alert {
+    animation: fadeIn 0.5s ease;
+    }
+    footer {
+    color: white;
+    margin-top: 10px;
+    }
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
     }
 </style>
 </head>
 <body>
 
-<div class="box">
-<img src="assets/images/logo_reseau_social.jpg" alt="Logo" style="height: 60px;" class="mb-4">
+<div class="overlay d-flex flex-column flex-md-row justify-content-between align-items-center">
 
-<!-- Form Connexion -->
-<div id="loginSection" class="visible">
-    <h4>Se connecter</h4>
+<!-- Bloc gauche -->
+<div class="col-md-6 text-center text-md-start mb-5 mb-md-0">
+    <div class="logo mb-3 text-md-center">
+        <img src="assets/images/logo_reseau_social.jpg" class="img-fluid" alt="Logo SocialConnect" style="max-width: 200px; height: auto;">
+    </div>
+    <p class="tagline">Restez en contact avec vos amis et votre entourage sur SocialConnect.</p>
+</div>
+
+<!-- Connexion -->
+<div class="col-md-5 p-4">
+    <div class="card card-login">
     <div id="loginMessage"></div>
     <form id="loginForm">
-    <input type="email" class="form-control mb-3" name="email" placeholder="Email" required>
-    <input type="password" class="form-control mb-3" name="password" placeholder="Mot de passe" required>
-    <button type="submit" class="btn btn-primary w-100">Connexion</button>
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+        <input type="email" class="form-control" name="email" placeholder="Adresse e-mail" required>
+        </div>
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+        <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Se connecter</button>
     </form>
-    <p class="mt-3">Pas encore de compte ? <button class="btn btn-link p-0" onclick="showRegister()">Créer un compte</button></p>
+    <div class="text-center">
+        <button class="btn btn-success w-75" data-bs-toggle="modal" data-bs-target="#registerModal">Créer un compte</button>
+    </div>
+    <div id="loader" class="text-center my-3" style="display:none;">
+        <div class="spinner-border text-primary"></div>
+    </div>
+    </div>
 </div>
 
-<!-- Form Inscription -->
-<div id="registerSection" class="hidden">
-    <h4>Créer un compte</h4>
-    <div id="registerMessage"></div>
-    <form id="registerForm">
-    <input type="text" class="form-control mb-3" name="firstname" placeholder="Prénom" required>
-    <input type="text" class="form-control mb-3" name="lastname" placeholder="Nom" required>
-    <input type="email" class="form-control mb-3" name="email" placeholder="Email" required>
-    <input type="password" class="form-control mb-3" name="password" placeholder="Mot de passe" required>
-    <button type="submit" class="btn btn-success w-100">Créer un compte</button>
+</div>
+
+<!-- Modal Inscription -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content p-3">
+    <div class="modal-header">
+        <h5 class="modal-title">Créer un compte</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div id="registerMessage" class="px-3"></div>
+    <form id="registerForm" class="px-3 pb-3">
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+        <input type="text" class="form-control" name="firstname" placeholder="Prénom" required>
+        </div>
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+        <input type="text" class="form-control" name="lastname" placeholder="Nom" required>
+        </div>
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+        <input type="email" class="form-control" name="email" placeholder="Email" required>
+        </div>
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+        <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
+        </div>
+        <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+        <input type="password" class="form-control" name="confirm_password" placeholder="Confirmer le mot de passe" required>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Créer un compte</button>
+        <div id="loaderReg" class="text-center my-3" style="display:none;">
+        <div class="spinner-border text-success"></div>
+        </div>
     </form>
-    <p class="mt-3">Déjà inscrit ? <button class="btn btn-link p-0" onclick="showLogin()">Se connecter</button></p>
+    </div>
+    </div>
+    </div>
 </div>
 
-</div>
-
+<script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/login_register.js"></script>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script>
-function showRegister() {
-    document.getElementById('loginSection').classList.remove('visible');
-    document.getElementById('loginSection').classList.add('hidden');
-    setTimeout(() => {
-    document.getElementById('registerSection').classList.remove('hidden');
-    document.getElementById('registerSection').classList.add('visible');
-    }, 300);
-}
 
-function showLogin() {
-    document.getElementById('registerSection').classList.remove('visible');
-    document.getElementById('registerSection').classList.add('hidden');
-    setTimeout(() => {
-    document.getElementById('loginSection').classList.remove('hidden');
-    document.getElementById('loginSection').classList.add('visible');
-    }, 300);
-}
-</script>
+<footer class="text-center">
+    <p>&copy; 2025 SocialConnect. Tous droits réservés.</p>
+</footer>
 </body>
 </html>
