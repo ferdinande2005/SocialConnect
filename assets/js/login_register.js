@@ -44,7 +44,8 @@ function handleError(error, container) {
 }
 
 // Gestion de la connexion
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
+const loginForm = document.getElementById('loginForm');
+loginForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const formData = {
@@ -61,7 +62,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     document.getElementById('loader').style.display = 'block';
 
     try {
-        const response = await fetch(`${API_URL}/login.php`, {
+        const response = fetch(`${API_URL}/login.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             body: JSON.stringify(formData)
         });
 
-        const data = await response.json();
+        const data = response.json();
 
         document.getElementById('loader').style.display = 'none';
 
@@ -91,7 +92,8 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 });
 
 // Gestion de l'inscription
-document.getElementById('registerForm').addEventListener('submit', async function (e) {
+const registerForm = document.getElementById('registerForm');
+registerForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const formData = {
@@ -111,7 +113,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     document.getElementById('loaderReg').style.display = 'block';
 
     try {
-        const response = await fetch(`${API_URL}/register.php`, {
+        const response = fetch(`${API_URL}/register.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +122,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             body: JSON.stringify(formData)
         });
 
-        const data = await response.json();
+        const data = response.json();
 
         document.getElementById('loaderReg').style.display = 'none';
 
