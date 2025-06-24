@@ -23,8 +23,9 @@ try {
     $update = $pdo->prepare("UPDATE users SET status = 'active', activation_token = NULL WHERE activation_token = ?");
     $update->execute([$token]);
 
-    jsonResponse(['status' => 'success', 'message' => 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.'], 200);
-
+    header('Location: ../index.html?activated=1');
+    exit;
+    
 } catch (Exception $e) {
     jsonResponse(['status' => 'error', 'message' => 'Erreur serveur'], 500);
 }

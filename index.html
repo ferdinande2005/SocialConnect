@@ -2,153 +2,121 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>SocialConnect</title>
+<title>SocialConnect - Connexion</title>
 <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/icons/bootstrap-icons.css" rel="stylesheet">
 <style>
-    body {
-    background: url('assets/images/Background.png') no-repeat center center fixed;
-    background-size: cover;
-    backdrop-filter: blur(4px);
-    }
-    .overlay {
-    background: rgba(255,255,255,0.85);
+body {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    min-height: 100vh;
+}
+.container-flex {
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    padding: 40px;
-    }
-    .logo img {
-        max-width: 200px;
-        height: auto;
-    }
-    .tagline {
-    font-size: 22px;
-    color: #1c1e21;
-    }
-    .card-login {
-    max-width: 400px;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    background: #fff;
-    }
-    .modal.fade .modal-dialog {
-    transform: translateY(-50px);
-    opacity: 0;
-    transition: all 0.4s ease;
-    }
-    .modal.fade.show .modal-dialog {
-    transform: translateY(0);
-    opacity: 1;
-    }
-    .spinner-border {
-    width: 2.5rem;
-    height: 2.5rem;
-    }
-    .btn-primary, .btn-success {
-    transition: 0.3s ease;
-    }
-    .btn-primary:hover, .btn-success:hover {
-    transform: scale(1.03);
-    }
-    .alert {
-    animation: fadeIn 0.5s ease;
-    }
-    footer {
+}
+.card-login {
+    display: flex;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    max-width: 950px;
+    width: 100%;
+}
+.left-panel {
+    background: #007bff;
     color: white;
+    padding: 40px;
+    flex: 1;
+}
+.left-panel h2 {
+    font-weight: 800;
+}
+.left-panel p {
     margin-top: 10px;
-    }
-    @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-    }
+}
+.left-panel .feature {
+    margin-top: 30px;
+}
+.left-panel .feature i {
+    font-size: 28px;
+    margin-right: 10px;
+}
+.right-panel {
+    background: #fff;
+    padding: 50px;
+    flex: 1;
+}
+.right-panel h3 {
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+.input-group-text {
+    background: #f0f0f0;
+}
+footer {
+    margin-top: 20px;
+    color: white;
+    text-align: center;
+}
 </style>
 </head>
 <body>
 
-<div class="overlay d-flex flex-column flex-md-row justify-content-between align-items-center">
+<div class="container-flex">
+    <div class="card-login">
+        <div class="left-panel d-flex flex-column justify-content-center">
+            <h2>SocialConnect</h2>
+            <p>Connectez-vous avec vos amis et le monde qui vous entoure sur SocialConnect.</p>
+            <div class="feature"><i class="bi bi-people-fill"></i> Restez connecté</div>
+            <div class="feature"><i class="bi bi-share-fill"></i> Partagez facilement</div>
+            <div class="feature"><i class="bi bi-globe2"></i> Découvrez le monde</div>
+        </div>
 
-<!-- Bloc gauche -->
-<div class="col-md-6 text-center text-md-start mb-5 mb-md-0">
-    <div class="logo mb-3 text-md-center">
-        <img src="assets/images/logo_reseau_social.jpg" class="img-fluid" alt="Logo SocialConnect" style="max-width: 200px; height: auto;">
-    </div>
-    <p class="tagline">Restez en contact avec vos amis et votre entourage sur SocialConnect.</p>
-</div>
+        <div class="right-panel">
+            <div id="activationMessage"></div>
+            <div id="loginMessage"></div>
+            <h3>Se connecter</h3>
+            <form id="loginForm">
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                    <input type="email" class="form-control" name="email" placeholder="Adresse e-mail" required>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Se connecter</button>
+            </form>
 
-<!-- Connexion -->
-<div class="col-md-5 p-4">
-    <div class="card card-login">
-    <div id="loginMessage"></div>
-    <form id="loginForm">
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-        <input type="email" class="form-control" name="email" placeholder="Adresse e-mail" required>
+            <div class="text-center mt-5">
+                <p>Pas de compte ? <a href="register.html" class="text-decoration-none">Créer un compte</a></p>
+            </div>
+            <div id="loader" class="text-center my-3" style="display:none;">
+                <div class="spinner-border text-primary"></div>
+            </div>
         </div>
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-        <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100 mb-3">Se connecter</button>
-    </form>
-    <div class="text-center">
-        <button class="btn btn-success w-75" data-bs-toggle="modal" data-bs-target="#registerModal">Créer un compte</button>
-    </div>
-    <div id="loader" class="text-center my-3" style="display:none;">
-        <div class="spinner-border text-primary"></div>
-    </div>
-    </div>
-</div>
-
-</div>
-
-<!-- Modal Inscription -->
-<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content p-3">
-    <div class="modal-header">
-        <h5 class="modal-title">Créer un compte</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-    </div>
-    <div id="registerMessage" class="px-3"></div>
-    <form id="registerForm" class="px-3 pb-3">
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-        <input type="text" class="form-control" name="firstname" placeholder="Prénom" required>
-        </div>
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-        <input type="text" class="form-control" name="lastname" placeholder="Nom" required>
-        </div>
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-        <input type="email" class="form-control" name="email" placeholder="Email" required>
-        </div>
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-        <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
-        </div>
-        <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-        <input type="password" class="form-control" name="confirm_password" placeholder="Confirmer le mot de passe" required>
-        </div>
-        <button type="submit" class="btn btn-success w-100">Créer un compte</button>
-        <div id="loaderReg" class="text-center my-3" style="display:none;">
-        <div class="spinner-border text-success"></div>
-        </div>
-    </form>
-    </div>
-    </div>
     </div>
 </div>
 
 <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/login_register.js"></script>
-
-<footer class="text-center">
-    <p>&copy; 2025 SocialConnect. Tous droits réservés.</p>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('activated')) {
+        document.getElementById('activationMessage').innerHTML = `
+            <div class="alert alert-success">
+                ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
+            </div>
+        `;
+    }
+});
+</script>
+<footer>
+    <p>&copy; 2025 SocialConnect</p>
 </footer>
 </body>
 </html>
