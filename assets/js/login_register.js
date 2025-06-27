@@ -5,7 +5,6 @@ const API_URL = 'http://localhost/ReseauSocial/api';
 function validateForm(formData, type) {
     const errors = [];
 
-    // Validation email
     if (!formData.email || !formData.email.trim()) {
         errors.push('L\'email est requis');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -36,112 +35,165 @@ function validateForm(formData, type) {
 
 // Affichage des erreurs
 function handleError(error, container) {
-    container.innerHTML = `
-        <div class="alert alert-danger">
-            <strong>Erreur :</strong> ${error}
-        </div>
-    `;
+    if (container) {
+        container.innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Erreur :</strong> ${error}
+            </div>
+        `;
+    }
 }
 
-// Gestion de la connexion
-const loginForm = document.getElementById('loginForm');
-loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
 
-    const formData = {
-        email: this.email.value.trim(),
-        password: this.password.value
-    };
-
-    const errors = validateForm(formData, 'login');
-    if (errors.length > 0) {
-        handleError(errors.join('<br>'), document.getElementById('loginMessage'));
-        return;
+    // Gestion connexion
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        
+    //preremplir le champs si rememberMe est coche
+    const savedEmail = localStorage.getItem('email');
+    if (savedEmail) {
+        document.querySelector('input[name="email"]').value = savedEmail;
+        document.getElementById('rememberMe').checked = true;
     }
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-    document.getElementById('loader').style.display = 'block';
+            const formData = {
+                email: this.email.value.trim(),
+                password: this.password.value
+            };
 
-    try {
-        const response = fetch(`${API_URL}/login.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
-            },
-            body: JSON.stringify(formData)
+            const errors = validateForm(formData, 'login');
+            if (errors.length > 0) {
+                handleError(errors.join('<br>'), document.getElementById('loginMessage'));
+                return;
+            }
+
+            document.getElementById('loader').style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_URL}/login.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                document.getElementById('loader').style.display = 'none';
+
+                if (data.status === 'success') {
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                    sessionStorage.setItem('csrf_token', data.user.csrf_token);
+                    
+                    if (document.getElementById('rememberMe').checked) {
+                        localStorage.setItem('rememberedEmail', formData.email);
+                    } else {
+                        localStorage.removeItem('rememberedEmail');
+                    }
+                    setTimeout(() => {
+                        window.location.href = 'vues/clients/home.html';
+                    }, 1200);
+                } else {
+                    handleError(data.message, document.getElementById('loginMessage'));
+                }
+                
+                
+
+            } catch (error) {
+                handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
+                document.getElementById('loader').style.display = 'none';
+            }
         });
-
-        const data = response.json();
-
-        document.getElementById('loader').style.display = 'none';
-
-        if (data.status === 'success') {
-            sessionStorage.setItem('user', JSON.stringify(data.user));
-            sessionStorage.setItem('csrf_token', data.user.csrf_token);
-
-            setTimeout(() => {
-                window.location.href = 'vues/clients/home.html';
-            }, 1200);
-        } else {
-            handleError(data.message, document.getElementById('loginMessage'));
-        }
-    } catch (error) {
-        handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
-        document.getElementById('loader').style.display = 'none';
-    }
-});
-
-// Gestion de l'inscription
-const registerForm = document.getElementById('registerForm');
-registerForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const formData = {
-        firstname: this.firstname.value.trim(),
-        lastname: this.lastname.value.trim(),
-        email: this.email.value.trim(),
-        password: this.password.value,
-        confirm_password: this.confirm_password.value
-    };
-
-    const errors = validateForm(formData, 'register');
-    if (errors.length > 0) {
-        handleError(errors.join('<br>'), document.getElementById('registerMessage'));
-        return;
     }
 
-    document.getElementById('loaderReg').style.display = 'block';
+    // Gestion inscription
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-    try {
-        const response = fetch(`${API_URL}/register.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
-            },
-            body: JSON.stringify(formData)
+            const formData = {
+                firstname: this.firstname.value.trim(),
+                lastname: this.lastname.value.trim(),
+                email: this.email.value.trim(),
+                password: this.password.value,
+                confirm_password: this.confirm_password.value
+            };
+
+            const errors = validateForm(formData, 'register');
+            if (errors.length > 0) {
+                handleError(errors.join('<br>'), document.getElementById('registerMessage'));
+                return;
+            }
+
+            document.getElementById('loaderReg').style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_URL}/register.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                document.getElementById('loaderReg').style.display = 'none';
+
+                if (data.status === 'success') {
+                    document.getElementById('registerMessage').innerHTML = `
+                        <div class="alert alert-success">
+                            ${data.message}
+                        </div>
+                    `;
+                    this.reset();
+                    setTimeout(() => {
+                        window.location.href = 'vues/clients/home.html';
+                    }, 1200);
+                } else {
+                    handleError(data.message, document.getElementById('registerMessage'));
+                }
+
+            } catch (error) {
+                handleError('Une erreur est survenue lors de l\'inscription', document.getElementById('registerMessage'));
+                document.getElementById('loaderReg').style.display = 'none';
+            }
         });
+    }
 
-        const data = response.json();
-
-        document.getElementById('loaderReg').style.display = 'none';
-
-        if (data.status === 'success') {
-            document.getElementById('registerMessage').innerHTML = `
+    // Message activation
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('activated')) {
+        const activationMsg = document.getElementById('activationMessage');
+        if (activationMsg) {
+            activationMsg.innerHTML = `
                 <div class="alert alert-success">
-                    ${data.message}
+                    ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
                 </div>
             `;
-            this.reset();
-
-            setTimeout(() => {
-                window.location.href = 'vues/clients/home.html';
-            }, 1200);
-        } else {
-            handleError(data.message, document.getElementById('registerMessage'));
         }
-    } catch (error) {
-        handleError('Une erreur est survenue lors de l\'inscription', document.getElementById('registerMessage'));
-        document.getElementById('loaderReg').style.display = 'none';
+    }
+
+    // Gestion oeil togglePassword s'il existe
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', () => {
+            const icon = togglePassword.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
     }
 });

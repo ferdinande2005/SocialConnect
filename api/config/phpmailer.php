@@ -6,7 +6,7 @@
         'smtp_auth' => true,
         'username' => 'socialconnect48@gmail.com',
         'password' => 'pqxb keiq urpj lmzx',
-        'smtp_secure' => 'PHPMailer::ENCRYPTION_SMTPS',
+        'smtp_secure' => 'ssl',
         'from_email' => 'socialconnect48@gmail.com',
         'from_name' => 'SocialConnect'
     ];
