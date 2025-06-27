@@ -50,5 +50,5 @@ $update->execute([$newPassword, $user['id']]);
 
 echo json_encode(['status' => 'success', 'message' => 'Votre mot de passe a été réinitialisé avec succès.']);
 
-header('Location: http://localhost/ReseauSocial/index.html');
-exit();
+//header('Location: http://localhost/ReseauSocial/index.html');
+//exit();
