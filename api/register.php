@@ -18,7 +18,7 @@
         http_response_code(200);
         exit();
     }
-        
+
     // Configuration PHPMailer
     require_once 'config/phpmailer.php';
 
@@ -68,7 +68,7 @@
     // Génération de variables pour l'inscription
     $csrf_token = bin2hex(random_bytes(32));
     $activation_token = bin2hex(random_bytes(32));
-    $activation_link = "http://localhost/ReseauSocial/index.html?token=" . $activation_token;
+    //$activation_link = "http://localhost/ReseauSocial/index.html?token=" . $activation_token;
 
     try {
         // Vérification de l'email
