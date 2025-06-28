@@ -1,4 +1,12 @@
 <?php
+
+// Configuration des headers
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
+
 // Configuration de la base de données
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'social_network');
@@ -31,8 +39,4 @@ try {
     jsonResponse(['status' => 'error', 'message' => 'Erreur de connexion à la base de données'], 500);
 }
 
-// Configuration des headers
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-header('Access-Control-Allow-Headers: Content-Type');
+

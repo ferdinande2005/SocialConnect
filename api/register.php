@@ -1,17 +1,31 @@
 <?php
-    // Configuration de la réponse JSON
-    header('Content-Type: application/json');
-
-    // Inclusion des fichiers de configuration
-    include 'config.php';
-
-    // Configuration PHPMailer
-    include 'config/phpmailer.php';
-    include 'vendor/autoload.php';
-
     // Utilisation de PHPMailer
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
+    use PHPMailer\PHPMailer\SMTP;
+
+    // Inclusion des fichiers de configuration
+    require_once 'config.php';
+
+    // Handle preflight (OPTIONS) request
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        // Configuration des headers
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
+        header('Access-Control-Allow-Credentials: true');
+        http_response_code(200);
+        exit();
+    }
+
+    // Configuration PHPMailer
+    require_once 'config/phpmailer.php';
+
+    //include 'vendor/autoload.php';
+    require '../vendor/phpmailer/phpmailer/src/Exception.php';
+    require '../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+    require '../vendor/phpmailer/phpmailer/src/SMTP.php';
 
     // Vérification de la méthode HTTP
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -54,7 +68,7 @@
     // Génération de variables pour l'inscription
     $csrf_token = bin2hex(random_bytes(32));
     $activation_token = bin2hex(random_bytes(32));
-    $activation_link = "http://localhost/ReseauSocial/index.html?token=" . $activation_token;
+    //$activation_link = "http://localhost/ReseauSocial/index.html?token=" . $activation_token;
 
     try {
         // Vérification de l'email
@@ -80,7 +94,7 @@
         // Envoi de l'email de confirmation
         try {
             $mail = new PHPMailer();
-            $mail->SMTPDebug = 0; // Décommentez pour le débogage: 2;
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER; // Décommentez pour le débogage: 2;
             
             // Configuration serveur
             $mail->isSMTP();
@@ -90,7 +104,7 @@
             $mail->Password = $phpmailer_config['password'];
             $mail->SMTPSecure = $phpmailer_config['smtp_secure'];
             $mail->Port = $phpmailer_config['port'];
-            
+
             // Expéditeur
             $mail->setFrom($phpmailer_config['from_email'], $phpmailer_config['from_name']);
             
