@@ -86,8 +86,10 @@ footer {
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                    <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
-                    <button type="button" class="btn btn-outline-secondary" id="togglePassword"><i class="bi bi-eye"></i></button>
+                    <input type="password" class="form-control password-field" name="password" placeholder="Mot de passe" required>
+                    <button type="button" class="btn btn-outline-secondary togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-5">
                     <div class="form-check">
@@ -124,20 +126,24 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Gestion de l'ouverture/fermeture du mot de passe
-document.getElementById('togglePassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
-    const icon = this.querySelector('i');
+document.querySelectorAll('.togglePassword').forEach(button => {
+    button.addEventListener('click', function () {
+        // Cherche le champ password dans le même input-group que le bouton
+        const passwordInput = this.closest('.input-group').querySelector('.password-field');
+        const icon = this.querySelector('i');
 
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
-    }
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
 });
+
 
 </script>
 <footer>
