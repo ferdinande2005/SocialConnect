@@ -64,7 +64,7 @@ Projet visant à développer une application web de type réseau social inspiré
 
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/votre-groupe/socialconnect.git
+   git clone https://github.com/bouabre225/socialconnect.git
 
 
 2. Importer la base de données via le fichier `socialconnect.sql`
