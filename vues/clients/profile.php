@@ -1,33 +1,7 @@
 <?php
-require_once 'C:\xampp\htdocs\SocialConnect\api\config.php';
-
-// Verifier si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    header('Location: C:\xampp\htdocs\SocialConnect\api\login.php');
-    exit;
-}
-
-$currentUserId = $_SESSION['user_id'];
-$profileUserId = isset($_GET['id']) ? (int)$_GET['id'] : $currentUserId;
-
-// Obtenir les données utilisateur
-$user = getUserData($profileUserId, $pdo);
-if (!$user) {
-    die("User not found");
-}
-
-// Verifier si on consulte son propre profil
-$isOwnProfile = ($currentUserId == $profileUserId);
-
-// Otenir les plublications de l'utilisateur
-$stmt = $pdo->prepare("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC");
-$stmt->execute([$profileUserId]);
-$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Obtenir le nombre d'amis
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM friendships WHERE (user_id = ? OR friend_id = ?) AND status = 'accepted'");
-$stmt->execute([$profileUserId, $profileUserId]);
-$friendCount = $stmt->fetchColumn();
+ 
+ include "C:\xampp\htdocs\SocialConnect\vues\clients\Pro.php";
+  
 ?>
 
 <!DOCTYPE html>
@@ -756,130 +730,8 @@ $friendCount = $stmt->fetchColumn();
         </div>
     </div>
     
-    <script>
-        // DOM Elements
-        const editProfileBtn = document.getElementById('editProfileBtn');
-        const passwordModal = document.getElementById('passwordModal');
-        const editProfileModal = document.getElementById('editProfileModal');
-        const passwordForm = document.getElementById('passwordForm');
-        const profileForm = document.getElementById('profileForm');
-        const modalCloses = document.querySelectorAll('.modal-close');
-        const publishPostBtn = document.getElementById('publishPostBtn');
-        const postContent = document.getElementById('postContent');
-        
-        // Ouvrir la fenêtre modale de mot de passe quand le bouton modifier le profil est cliqué
-        if (editProfileBtn) {
-            editProfileBtn.addEventListener('click', () => {
-                passwordModal.style.display = 'flex';
-            });
-        }
-        
-        // Fermer la fenêtre modale quand le bouton fermer est cliqué
-        modalCloses.forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.style.display = 'none';
-                });
-            });
-        });
-        
-        // Fermer la fenêtre modale en cliquant à l'extérieur du contenu de la fenêtre modale
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
-        
-        // Gérer la soumission du formulaire de mot de passe
-        passwordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(passwordForm);
-            
-            try {
-                const response = await fetch('verify_password.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    passwordModal.style.display = 'none';
-                    editProfileModal.style.display = 'flex';
-                } else {
-                    alert(data.message || 'Mot de passe incorrect');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Une erreur est survenue');
-            }
-        });
-        
-        // Gérer la soumission du formulaire du profil
-        profileForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(profileForm);
-            
-            try {
-                const response = await fetch('C:\xampp\htdocs\SocialConnect\api\config\Update_Profil.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('Profil mis à jour avec succès');
-                    location.reload();
-                } else {
-                    alert(data.message || 'Erreur lors de la mise à jour du profil');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Une erreur est survenue');
-            }
-        });
-        
-        // Gérer la publication
-        if (publishPostBtn) {
-            publishPostBtn.addEventListener('click', async () => {
-                const content = postContent.value.trim();
-                
-                if (!content) {
-                    alert('Veuillez entrer du contenu');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('create_post.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            content: content,
-                            csrf_token: '<?= $_SESSION['csrf_token'] ?>'
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        alert('Publication créée avec succès');
-                        location.reload();
-                    } else {
-                        alert(data.message || 'Erreur lors de la création de la publication');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Une erreur est survenue');
-                }
-            });
-        }
+    <script src="C:\xampp\htdocs\SocialConnect\vues\clients\profile.js">
+       
     </script>
 
              <!-- Modals (à inclure en bas du fichier) -->
