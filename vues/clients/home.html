@@ -1,17 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../assets/css/style.css" rel="stylesheet">
+  <link rel="shortcut icon" href="#" type="image/x-icon">
+  <title>SocialConnect - Fil d'actualité</title>
 </head>
 <body>
-    <script src="../../assets/js/login_register.js">
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!sessionStorage.getItem('csrf_token')) {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
+  <nav class="navbar navbar-light bg-white shadow-sm">
+    <div class="container-fluid">
+      <a href="#" class="navbar-brand text-primary fw-bold">SocialConnect</a>
+      <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
+        <button class="btn btn-outline-primary" type="submit">Rechercher</button>
+      </form>
+    </div>
+
+    <div class="container mt-4">
+      <div id="storiesContainer" class="d-flex overflow-auto mb-3"></div>
+      <div class="card-body">
+        <textarea name="" id=""></textarea>
+
+      </div>
+    </div>
+
+  </nav>
 </body>
 </html>
