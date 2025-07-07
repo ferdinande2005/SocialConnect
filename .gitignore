@@ -1,0 +1,11 @@
+# Ignore les fichiers de configuration
+config.php
+
+# Ignore les fichiers de la base de données
+*.sql
+
+# Ignore les fichiers de la base de données
+*.sql
+
+# Ignore les fichiers de la base de données
+*.sql
