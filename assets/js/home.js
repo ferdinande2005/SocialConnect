@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var chatBtn = document.getElementById('go-to-chat');
     if(chatBtn) {
         chatBtn.addEventListener('click', function() {
-            window.location.href = 'chat.html';
+            router('/chat');
         });
     }
     
