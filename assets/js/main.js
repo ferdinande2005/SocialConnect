@@ -5,7 +5,11 @@ const routes = {
     '/register' : '/vues/clients/register.html',
     '/forgot' : '/vues/clients/forgot_password.html',
     '/reset' : '/vues/clients/reset_password.html',
-    '/chat' : '/vues/clients/chat.html'
+    '/chat' : '/vues/clients/chat.html',
+    '/admin': '/vues/admin/index.html',
+    '/profile': '/vues/clients/profile.html',
+    '/notification': '/vues/clients/notification.html',
+    '/moderator': '/vues/admin/dashboard-moderator.html' 
 };
 
 // Fonction pour charger un script dynamiquement
@@ -46,6 +50,18 @@ async function loadView(url){
         case '/vues/clients/chat.html':
             document.getElementById('style').href = '/assets/css/chat.css';
             break;
+        case '/vues/admin/index.html':
+            document.getElementById('style').href = '/assets/css/login_admin.css';
+            break;
+        case '/vues/clients/profile.html':
+            document.getElementById('style').href = '/assets/css/profile.css';
+            break;
+        case '/vues/clients/notification.html':
+            document.getElementById('style').href = '/assets/css/notification.css';
+            break;
+        case '/vues/admin/dashboard-moderator.html':
+            document.getElementById('style').href = '/assets/css/moderator.css';
+            break;
     }
 
     //charger le js de la vue
@@ -67,6 +83,18 @@ async function loadView(url){
             break;
         case '/vues/clients/chat.html':
             loadScript('/assets/js/chat.js');
+            break;
+        case '/vues/admin/index.html':
+            loadScript('/assets/js/admin.js');
+            break;
+        case '/vues/clients/profile.html':
+            loadScript('/assets/js/profile.js');
+            break;
+        case '/vues/clients/notification.html':
+            loadScript('/assets/js/notification.js');
+            break;
+        case '/vues/admin/dashboard-moderator.html':
+            loadScript('/assets/js/moderator.js');
             break;
     }
 }

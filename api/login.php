@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 // Vérification de la méthode HTTP
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') { 
     jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
 }
 

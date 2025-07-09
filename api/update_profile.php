@@ -23,7 +23,7 @@ $location = $_POST['location'] ?? '';
 
 try {
     // Mettre à jour les informations de base
-    $stmt = $pdo->prepare("UPDATE users SET bio = ?, education = ?, location = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE profiles SET bio = ?, education = ?, location = ? WHERE id = ?");
     $stmt->execute([$bio, $education, $location, $user_id]);
 
     // Traitement des fichiers uploadés (avatar et cover photo)
