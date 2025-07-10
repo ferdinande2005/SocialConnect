@@ -1,5 +1,7 @@
+
 // Configuration de l'API
 const API_URL = 'http://localhost/ReseauSocial/api';
+const app = document.getElementById('app');
 
 // Validation des formulaires
 function validateForm(formData, type) {
@@ -15,18 +17,30 @@ function validateForm(formData, type) {
         if (!formData.password || formData.password.length < 8) {
             errors.push('Le mot de passe doit contenir au moins 8 caractères');
         }
-    } else { // register
+    } else {
         if (!formData.firstname || !formData.firstname.trim()) {
             errors.push('Le prénom est requis');
         }
         if (!formData.lastname || !formData.lastname.trim()) {
             errors.push('Le nom est requis');
         }
-        if (formData.password !== formData.confirm_password) {
-            errors.push('Les mots de passe ne correspondent pas');
+        if (!formData.username || !formData.username.trim()) {
+            errors.push('Le nom d\'utilisateur est requis');
+        }
+        if (!formData.birthdate) {
+            errors.push('La date de naissance est requise');
+        }
+        if (!formData.gender) {
+            errors.push('Le genre est requis');
+        }
+        if (!formData.country) {
+            errors.push('Le pays est requis');
         }
         if (formData.password.length < 8 || formData.password.length > 72) {
             errors.push('Le mot de passe doit contenir entre 8 et 72 caractères');
+        }
+        if (formData.password !== formData.confirm_password) {
+            errors.push('Les mots de passe ne correspondent pas');
         }
     }
 
@@ -44,24 +58,24 @@ function handleError(error, container) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// Gestion des formulaires
+console.log('DOMContentLoaded capturé');
+document.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    console.log('Événement submit capturé pour', e.target.id);
 
-    // Gestion connexion
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        
-    //preremplir le champs si rememberMe est coche
-    const savedEmail = localStorage.getItem('email');
-    if (savedEmail) {
-        document.querySelector('input[name="email"]').value = savedEmail;
-        document.getElementById('rememberMe').checked = true;
-    }
-        loginForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
+    try {
+        // LOGIN
+        if (e.target.id === 'loginForm') {
+            const savedEmail = localStorage.getItem('rememberedEmail');
+            if (savedEmail) {
+                document.querySelector('input[name="email"]').value = savedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
 
             const formData = {
-                email: this.email.value.trim(),
-                password: this.password.value
+                email: e.target.email.value.trim(),
+                password: e.target.password.value
             };
 
             const errors = validateForm(formData, 'login');
@@ -71,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             document.getElementById('loader').style.display = 'block';
-
             try {
                 const response = await fetch(`${API_URL}/login.php`, {
                     method: 'POST',
@@ -83,45 +96,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const data = await response.json();
-                document.getElementById('loader').style.display = 'none';
 
                 if (data.status === 'success') {
                     sessionStorage.setItem('user', JSON.stringify(data.user));
                     sessionStorage.setItem('csrf_token', data.user.csrf_token);
-                    
+
                     if (document.getElementById('rememberMe').checked) {
                         localStorage.setItem('rememberedEmail', formData.email);
                     } else {
                         localStorage.removeItem('rememberedEmail');
                     }
                     setTimeout(() => {
-                        window.location.href = 'vues/clients/home.html';
+                        history.pushState(null, '', '/home');
+                        router();
                     }, 1200);
                 } else {
                     handleError(data.message, document.getElementById('loginMessage'));
                 }
-                
-                
-
             } catch (error) {
                 handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
+            } finally {
                 document.getElementById('loader').style.display = 'none';
             }
-        });
-    }
 
-    // Gestion inscription
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
+        // REGISTER
+        } else if (e.target.id === 'registerForm') {
             const formData = {
-                firstname: this.firstname.value.trim(),
-                lastname: this.lastname.value.trim(),
-                email: this.email.value.trim(),
-                password: this.password.value,
-                confirm_password: this.confirm_password.value
+                firstname: e.target.firstname.value.trim(),
+                lastname: e.target.lastname.value.trim(),
+                username: e.target.username.value.trim(),
+                birthdate: e.target.birthdate.value,
+                gender: e.target.gender.value,
+                relationship_status: e.target.relationship_status.value,
+                profession: e.target.profession.value.trim(),
+                country: e.target.country.value,
+                city: e.target.city.value.trim(),
+                email: e.target.email.value.trim(),
+                interests: e.target.interests.value.trim(),
+                password: e.target.password.value,
+                confirm_password: e.target.confirm_password.value
             };
 
             const errors = validateForm(formData, 'register');
@@ -151,9 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${data.message}
                         </div>
                     `;
-                    this.reset();
+                    e.target.reset();
                     setTimeout(() => {
-                        window.location.href = 'vues/clients/home.html';
+                        history.pushState(null, '', '/login');
+                        router();
                     }, 1200);
                 } else {
                     handleError(data.message, document.getElementById('registerMessage'));
@@ -163,37 +177,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleError('Une erreur est survenue lors de l\'inscription', document.getElementById('registerMessage'));
                 document.getElementById('loaderReg').style.display = 'none';
             }
-        });
-    }
-
-    // Message activation
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('activated')) {
-        const activationMsg = document.getElementById('activationMessage');
-        if (activationMsg) {
-            activationMsg.innerHTML = `
-                <div class="alert alert-success">
-                    ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
-                </div>
-            `;
         }
-    }
-
-    // Gestion oeil togglePassword s'il existe
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('password');
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener('click', () => {
-            const icon = togglePassword.querySelector('i');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
-            }
-        });
+    } catch (error) {
+        console.error('Erreur dans le gestionnaire de soumission :', error);
     }
 });
+
+// Message activation
+const params = new URLSearchParams(window.location.search);
+if (params.has('activated')) {
+    const activationMsg = document.getElementById('activationMessage');
+    if (activationMsg) {
+        activationMsg.innerHTML = `
+            <div class="alert alert-success">
+                ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
+            </div>
+        `;
+    }
+}
+
+// Gestion oeil togglePassword
+const togglePassword = document.getElementById('togglePassword');
+const passwordInput = document.getElementById('password');
+if (togglePassword && passwordInput) {
+    togglePassword.addEventListener('click', () => {
+        const icon = togglePassword.querySelector('i');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+}

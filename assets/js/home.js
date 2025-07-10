@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    var chatBtn = document.getElementById('go-to-chat');
+    if(chatBtn) {
+        chatBtn.addEventListener('click', function() {
+            router('/chat');
+        });
+    }
+    
     // Contacts data
     const contacts = [
         { name: 'Thomas Chen', avatar: 'photo-1507003211169-0a1dd7228f2d', online: true },
@@ -82,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contactItem.innerHTML = `
             <div class="position-relative">
                 <img src="https://images.unsplash.com/${contact.avatar}?w=36&h=36&fit=crop&crop=face" 
-                     alt="${contact.name}" class="contact-avatar">
+                    alt="${contact.name}" class="contact-avatar">
                 ${contact.online ? '<div class="online-status"></div>' : ''}
             </div>
             <span class="contact-name">${contact.name}</span>
@@ -98,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         suggestionCard.innerHTML = `
             <div class="suggestion-header">
                 <img src="https://images.unsplash.com/${suggestion.avatar}?w=40&h=40&fit=crop&crop=face" 
-                     alt="${suggestion.name}" class="suggestion-avatar">
+                    alt="${suggestion.name}" class="suggestion-avatar">
                 <div class="suggestion-info">
                     <div class="suggestion-name">${suggestion.name}</div>
                     <div class="suggestion-mutuals">${suggestion.mutualFriends} amis en commun</div>
@@ -130,9 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
             storyItem.innerHTML = `
                 <div class="story-other">
                     <img src="https://images.unsplash.com/${story.avatar}?w=80&h=112&fit=crop&crop=face" 
-                         alt="${story.name}" class="story-image">
+                        alt="${story.name}" class="story-image">
                     <img src="https://images.unsplash.com/${story.avatar}?w=32&h=32&fit=crop&crop=face" 
-                         alt="${story.name}" class="story-avatar">
+                        alt="${story.name}" class="story-avatar">
                     <div class="story-name">${story.name.split(' ')[0]}</div>
                 </div>
             `;
@@ -207,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="post-author">
                     <div class="post-author-info">
                         <img src="https://images.unsplash.com/${post.avatar}?w=40&h=40&fit=crop&crop=face" 
-                             alt="${post.author}" class="post-avatar">
+                            alt="${post.author}" class="post-avatar">
                         <div>
                             <div class="post-author-name">${post.author}</div>
                             <div class="post-time">${post.time}</div>
@@ -222,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             ${post.image ? `
             <img src="https://images.unsplash.com/${post.image}?w=600&h=400&fit=crop" 
-                 alt="Post content" class="post-image">
+                alt="Post content" class="post-image">
             ` : ''}
             
             <div class="post-stats">
